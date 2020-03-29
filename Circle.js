@@ -1,10 +1,11 @@
 // Object Circle
 class Circle {
     constructor(x, y, radius, color) {
-      this.x = x
-      this.y = y
-      this.radius = radius
-      this.color = color
+        this.x = x;
+        this.y = y;
+        this.history = [[x,y]]; 
+        this.radius = radius
+        this.color = color
     }
   
     draw() {
@@ -17,5 +18,15 @@ class Circle {
   
     update() {
       this.draw()
+    }
+
+    setPosition(x,y){
+        this.x = x;
+        this.y = y;
+        this.history.push([x,y]);
+    }
+
+    getHistoricalPosition(){
+        return this.history;
     }
   }

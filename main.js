@@ -72,12 +72,19 @@ function borderCollision(){
 }
 
 function init() {
-  circle[0] = new Circle(500, 300, circleRadius, 'red');
+  circle[0] = new Circle(700, 300, circleRadius, 'red');
   circle[1] = new Circle(undefined, undefined, circleRadius, 'black');
+  circle[2] = new Circle(500, 300, circleRadius, 'black');
 }
 
+let tester = 0;
 // Animation Loop
 function animate() {
+  if(tester % 1000 == 0){
+    //console.log(circle[1].getHistoricalPosition());
+  }
+  tester++;
+
   requestAnimationFrame(animate)
 
   //cleare canvas
@@ -96,9 +103,9 @@ function animate() {
   circle[0].update();
 
   //update and drow circle2
-  circle[1].x = mouse.x;
-  circle[1].y = mouse.y;
+  circle[1].setPosition(mouse.x, mouse.y);
   circle[1].update();
+  circle[2].update();
 
   //determinate contact to target
   if(getDistance(circle[0].x, circle[0].y, circle[1].x, circle[1].y) < circle[0].radius +circle[1].radius){
@@ -114,7 +121,6 @@ function animate() {
     circle[1].color = 'black';
   }
 
-
 }
 
 //starter
@@ -122,6 +128,4 @@ init()
 animate()
 
 
-
-// implementa raccolta di azioni dei cerchi
 //implementa check su cerchio rosso, deve stare dentro i margini...
