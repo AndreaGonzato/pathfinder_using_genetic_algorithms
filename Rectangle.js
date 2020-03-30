@@ -1,16 +1,16 @@
 // Object Circle
-class Circle {
-    constructor(x, y, radius, color) {
+class Rectangle {
+    constructor(x, y, color) {
         this.x = x;
         this.y = y;
+        this.sideSize = 20;
+        this.color = color;
         this.history = [[x,y]]; 
-        this.radius = radius
-        this.color = color
     }
   
     draw() {
-      c.beginPath()
-      c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
+      c.beginPath();
+      c.rect(this.x, this.y, this.sideSize, this.sideSize);
       c.fillStyle = this.color
       c.fill()
       c.closePath()
@@ -24,6 +24,10 @@ class Circle {
         this.x = x;
         this.y = y;
         this.history.push([x,y]);
+    }
+
+    setColor(color){
+      this.color = color;
     }
 
     getHistoricalPosition(){

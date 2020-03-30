@@ -11,6 +11,12 @@ const mouse = {
   y: undefined
 }
 
+// remove scoll bars from the page
+function unloadScrollBars() {
+  document.documentElement.style.overflow = 'hidden';  // firefox, chrome
+  document.body.scroll = "no"; // ie only
+}
+
 // Event Listeners, update mouse pos when it moves
 addEventListener('mousemove', (event) => {
   mouse.x = event.clientX
@@ -26,6 +32,14 @@ addEventListener('resize', () => {
 
 
 //-----------------------------------------------------------------------------------------------
+let rectangle = [];
+let numbersOfRectangles = 3;
+var stage = 0; //use thi var for change stage
+/*
+0 main
+0 position the target
+1 position the starting point
+*/
 
 //deteminate distance from 2 points
 function getDistance(x1, y1, x2, y2) {
@@ -46,62 +60,66 @@ const edge = {
   thickness: 3,
   leftMargin: 10,
   topMargin: 10,
-  rightMargin: 30,
-  bottomMargin: 25
+  rightMargin: canvas.width - 30,
+  bottomMargin: canvas.height - 80
 };
 
-const circleRadius = 20;
-var stage = 0; //use thi var for change stage
-/*
-0 main
-1 positionTheTarget
-2 explore
-*/
-
-let circle = [];
-
-//determiante if a circle has a collision with the border
+//frozes a rectangle if have a collision on the border
 function borderCollision() {
-  //true = collision
-  //false = ok
-  if (circle[1].x < edge.leftMargin + circle[1].radius + edge.thickness) {
-    return true;
+  for(i = 2 ; i < numbersOfRectangles ; i++){
+    if(rectangle[i].x < edge.leftMargin 
+      || rectangle[i].y < edge.topMargin
+      || rectangle[i].x + 10 > edge.rightMargin
+      || rectangle[i].y + 10 > edge.bottomMargin){
+      rectangle[i].setColor('black');
+    }
+    else{
+      rectangle[i].setColor('green');
+    }
   }
-  if (circle[1].x > canvas.width - edge.rightMargin - circle[1].radius + 2 * edge.thickness) {
-    return true;
-  }
-  if (circle[1].y < edge.topMargin + circle[1].radius + edge.thickness) {
-    return true;
-  }
-  if (circle[1].y > canvas.height - edge.bottomMargin - circle[1].radius + 2 * edge.thickness) {
-    return true;
-  }
-  return false;
 
 }
 
 function main() {
-  document.getElementById("p1").innerHTML = "Click on the screen to position the target";
-  circle[0] = new Circle(undefined, undefined, circleRadius, 'red');
+  unloadScrollBars();
+  rectangle[0] = new Rectangle(undefined, undefined, 'red');
   positionTheTarget();
+  
+
+
 }
 
 
 function positionTheTarget() {
   drawEnvironment();
-  circle[0].setPosition(mouse.x, mouse.y);
-  circle[0].update();
+  rectangle[0].setPosition(mouse.x, mouse.y);
+  rectangle[0].update();
   if (stage == 1) {
-    console.log("target position: ", circle[0].x, circle[0].y);
-    initializesExplorers();
+    document.getElementById("p1").innerHTML = "now position the starting point";
+    console.log("target position: ", rectangle[0].x, rectangle[0].y);
+    rectangle[1] = new Rectangle(undefined, undefined, 'blue');
+    positionTheStartingPoint();
   } else {
     requestAnimationFrame(positionTheTarget); //loop agin in the animate function
   }
 }
 
+function positionTheStartingPoint(){
+  drawEnvironment();
+  rectangle[1].setPosition(mouse.x, mouse.y);
+  rectangle[1].update();
+  rectangle[0].update();
+  if (stage == 2) {
+    document.getElementById("p1").innerHTML = "good";
+    console.log("starting point position: ", rectangle[1].x, rectangle[1].y);
+    initializesExplorers();
+  } else {
+    requestAnimationFrame(positionTheStartingPoint); //loop agin in the animate function
+  }
+}
+
 function initializesExplorers() {
-  circle[1] = new Circle(400, 200, circleRadius, 'black');
-  circle[2] = new Circle(500, 300, circleRadius, 'black');
+  rectangle[2] = new Rectangle(400, 200, 'green');
   explore();
 }
 
@@ -112,29 +130,21 @@ function explore() {
   //clear caanvas and drow rect
   drawEnvironment();
 
-  //update and drow circle0
-  circle[0].update();
+  //update and drow rectangle[0]
+  rectangle[0].update();
+  rectangle[1].update();
 
-  //update and drow circle2
-  circle[1].setPosition(200, 300);
-  circle[1].update();
-  circle[1].setPosition(300, 400);
-  circle[2].update();
+  //update and drow rectangle
+  rectangle[2].setPosition(mouse.x, mouse.y);
+  rectangle[2].update();
 
 
   //determinate contact to target
-  if (getDistance(circle[0].x, circle[0].y, circle[1].x, circle[1].y) < circle[0].radius + circle[1].radius) {
-    circle[0].color = 'black';
-  } else {
-    circle[0].color = 'red';
-  }
 
   //determinate contact to edge
-  if (borderCollision()) {
-    circle[1].color = 'green';
-  } else {
-    circle[1].color = 'black';
-  }
+  borderCollision();
+  
+
 
   requestAnimationFrame(explore); //loop agin in the animate function
 }
@@ -147,7 +157,7 @@ function drawEnvironment() {
   c.beginPath();
   c.lineWidth = edge.thickness;
   c.strokeStyle = "red";
-  c.rect(edge.leftMargin, edge.topMargin, canvas.width - edge.rightMargin, canvas.height - edge.bottomMargin);
+  c.rect(edge.leftMargin, edge.topMargin, edge.rightMargin, edge.bottomMargin);
   c.stroke();
   c.closePath();
 }
