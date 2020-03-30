@@ -23,13 +23,6 @@ addEventListener('mousemove', (event) => {
   mouse.y = event.clientY
 })
 
-// Event Listeners, update canvas size after a resize
-addEventListener('resize', () => {
-  canvas.width = innerWidth
-  canvas.height = innerHeight
-  main()
-})
-
 
 //-----------------------------------------------------------------------------------------------
 let rectangle = [];
@@ -55,28 +48,29 @@ document.addEventListener("click", function () {
 });
 
 
-// IMPLEMENTATION
+// define edge of action
 const edge = {
   thickness: 3,
   leftMargin: 10,
   topMargin: 10,
-  rightMargin: canvas.width - 30,
-  bottomMargin: canvas.height - 80
+  rightMargin: 1200,
+  bottomMargin: 700
 };
 
-//frozes a rectangle if have a collision on the border
-function borderCollision() {
-  for(i = 2 ; i < numbersOfRectangles ; i++){
-    if(rectangle[i].x < edge.leftMargin 
-      || rectangle[i].y < edge.topMargin
-      || rectangle[i].x + 10 > edge.rightMargin
-      || rectangle[i].y + 10 > edge.bottomMargin){
-      rectangle[i].setColor('black');
-    }
-    else{
-      rectangle[i].setColor('green');
-    }
+//frozes the rectangle if have a collision on the border
+function borderCollision(rectangle, color) {
+
+  if (rectangle.x < edge.leftMargin
+    || rectangle.y < edge.topMargin
+    || rectangle.x + 10 > edge.rightMargin
+    || rectangle.y + 10 > edge.bottomMargin) {
+    rectangle.setColor('black');
+    rectangle.setIsFrozen(true);
   }
+  else {
+    rectangle.setColor(color);
+  }
+
 
 }
 
@@ -84,7 +78,7 @@ function main() {
   unloadScrollBars();
   rectangle[0] = new Rectangle(undefined, undefined, 'red');
   positionTheTarget();
-  
+
 
 
 }
@@ -92,7 +86,8 @@ function main() {
 
 function positionTheTarget() {
   drawEnvironment();
-  rectangle[0].setPosition(mouse.x, mouse.y);
+  rectangle[0].setPosition(Math.floor(mouse.x / 10) * 10, Math.floor(mouse.y / 10) * 10);
+  borderCollision(rectangle[0], 'red');
   rectangle[0].update();
   if (stage == 1) {
     document.getElementById("p1").innerHTML = "now position the starting point";
@@ -104,9 +99,10 @@ function positionTheTarget() {
   }
 }
 
-function positionTheStartingPoint(){
+function positionTheStartingPoint() {
   drawEnvironment();
-  rectangle[1].setPosition(mouse.x, mouse.y);
+  rectangle[1].setPosition(Math.floor(mouse.x / 10) * 10, Math.floor(mouse.y / 10) * 10);
+  borderCollision(rectangle[1], 'blue');
   rectangle[1].update();
   rectangle[0].update();
   if (stage == 2) {
@@ -135,15 +131,18 @@ function explore() {
   rectangle[1].update();
 
   //update and drow rectangle
-  rectangle[2].setPosition(mouse.x, mouse.y);
+  rectangle[2].setPosition(Math.floor(mouse.x / 10) * 10, Math.floor(mouse.y / 10) * 10);
   rectangle[2].update();
 
 
   //determinate contact to target
 
   //determinate contact to edge
-  borderCollision();
-  
+  for (i = 2; i < numbersOfRectangles; i++) {
+    borderCollision(rectangle[i], "green");
+  }
+
+
 
 
   requestAnimationFrame(explore); //loop agin in the animate function

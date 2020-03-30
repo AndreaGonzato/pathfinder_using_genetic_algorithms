@@ -1,36 +1,38 @@
-// Object Circle
 class Rectangle {
-    constructor(x, y, color) {
-        this.x = x;
-        this.y = y;
-        this.sideSize = 20;
-        this.color = color;
-        this.history = [[x,y]]; 
-    }
-  
-    draw() {
-      c.beginPath();
-      c.rect(this.x, this.y, this.sideSize, this.sideSize);
-      c.fillStyle = this.color
-      c.fill()
-      c.closePath()
-    }
-  
-    update() {
-      this.draw()
-    }
+  constructor(x, y, color) {
+    this.x = x;
+    this.y = y;
+    this.sideSize = 20;
+    this.color = color;
+    this.isFrozen = false;
+  }
 
-    setPosition(x,y){
-        this.x = x;
-        this.y = y;
-        this.history.push([x,y]);
-    }
+  draw() {
+    c.beginPath();
+    c.rect(this.x, this.y, this.sideSize, this.sideSize);
+    c.fillStyle = this.color
+    c.fill()
+    c.closePath()
+  }
 
-    setColor(color){
-      this.color = color;
-    }
+  update() {
+    this.draw()
+  }
 
-    getHistoricalPosition(){
-        return this.history;
+  setPosition(x, y) {
+    if (!this.isFrozen) {
+      this.x = x;
+      this.y = y;
     }
   }
+
+  setColor(color) {
+    this.color = color;
+  }
+
+  setIsFrozen(bool) {
+    this.isFrozen = bool;
+  }
+
+
+}
