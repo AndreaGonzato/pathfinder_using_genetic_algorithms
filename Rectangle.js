@@ -5,6 +5,7 @@ class Rectangle {
     this.sideSize = 20;
     this.color = color;
     this.isFrozen = false;
+    this.history = [];
   }
 
   draw() {
@@ -20,9 +21,28 @@ class Rectangle {
   }
 
   setPosition(x, y) {
-    if (!this.isFrozen) {
-      this.x = x;
-      this.y = y;
+    if(this.x != x || this.y != y){
+      let movement = '';
+      if (!this.isFrozen) {
+        if (this.x != x) {
+          if (x > this.x) {
+            movement = 'R';
+          }else{
+            movement = 'L';
+          }
+          this.history.push(movement);
+        }
+        if(this.y != y){
+          if(y > this.y){
+            movement = 'D';
+          }else{
+            movement = 'U';
+          }
+          this.history.push(movement);
+        }
+        this.x = x;
+        this.y = y;
+      }
     }
   }
 
@@ -32,6 +52,10 @@ class Rectangle {
 
   setIsFrozen(bool) {
     this.isFrozen = bool;
+  }
+
+  getHistory(){
+    return this.history;
   }
 
 

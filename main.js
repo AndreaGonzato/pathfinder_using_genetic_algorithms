@@ -5,7 +5,6 @@ let c = canvas.getContext("2d");
 canvas.width = innerWidth
 canvas.height = innerHeight
 
-
 const mouse = {
   x: undefined,
   y: undefined
@@ -48,7 +47,7 @@ document.addEventListener("click", function () {
 });
 
 
-// define edge of action
+// define space of action
 const edge = {
   thickness: 3,
   leftMargin: 10,
@@ -57,37 +56,40 @@ const edge = {
   bottomMargin: 700
 };
 
-//frozes the rectangle if have a collision on the border
-function borderCollision(rectangle, color) {
-
+/**
+ * froze rectangle if the are out of the space action
+ * freezes = true -> froze and change the color of the rect
+ * freezes = false -> just change the color of the rect
+ * @param {a obj of rectangle} rectangle 
+ * @param {type of color} color 
+ * @param {boolean} freezes : indicate if we really need to froze
+ */
+function borderCollision(rectangle, color, freezes) {
   if (rectangle.x < edge.leftMargin
     || rectangle.y < edge.topMargin
     || rectangle.x + 10 > edge.rightMargin
     || rectangle.y + 10 > edge.bottomMargin) {
     rectangle.setColor('black');
-    rectangle.setIsFrozen(true);
+    if(freezes && !rectangle.isFrozen){
+      rectangle.setIsFrozen(true);
+    }
   }
   else {
     rectangle.setColor(color);
   }
-
-
 }
 
 function main() {
   unloadScrollBars();
   rectangle[0] = new Rectangle(undefined, undefined, 'red');
   positionTheTarget();
-
-
-
 }
 
 
 function positionTheTarget() {
   drawEnvironment();
   rectangle[0].setPosition(Math.floor(mouse.x / 10) * 10, Math.floor(mouse.y / 10) * 10);
-  borderCollision(rectangle[0], 'red');
+  borderCollision(rectangle[0], 'red', false);
   rectangle[0].update();
   if (stage == 1) {
     document.getElementById("p1").innerHTML = "now position the starting point";
@@ -102,7 +104,7 @@ function positionTheTarget() {
 function positionTheStartingPoint() {
   drawEnvironment();
   rectangle[1].setPosition(Math.floor(mouse.x / 10) * 10, Math.floor(mouse.y / 10) * 10);
-  borderCollision(rectangle[1], 'blue');
+  borderCollision(rectangle[1], 'blue', false);
   rectangle[1].update();
   rectangle[0].update();
   if (stage == 2) {
@@ -115,22 +117,21 @@ function positionTheStartingPoint() {
 }
 
 function initializesExplorers() {
-  rectangle[2] = new Rectangle(400, 200, 'green');
+  for(i = 2 ; i<numbersOfRectangles ; i++){
+    rectangle[i] = new Rectangle(rectangle[1].x, rectangle[1].y, 'green');
+  }
   explore();
 }
 
 
-// Animation Loop
 function explore() {
-
   //clear caanvas and drow rect
   drawEnvironment();
-
-  //update and drow rectangle[0]
+  //update and drow rectangle 0 & 1
   rectangle[0].update();
   rectangle[1].update();
 
-  //update and drow rectangle
+  //update and drow explorer
   rectangle[2].setPosition(Math.floor(mouse.x / 10) * 10, Math.floor(mouse.y / 10) * 10);
   rectangle[2].update();
 
@@ -139,7 +140,7 @@ function explore() {
 
   //determinate contact to edge
   for (i = 2; i < numbersOfRectangles; i++) {
-    borderCollision(rectangle[i], "green");
+    borderCollision(rectangle[i], "green", true);
   }
 
 
@@ -151,7 +152,6 @@ function explore() {
 function drawEnvironment() {
   //cleare canvas
   c.clearRect(0, 0, canvas.width, canvas.height);
-
   //drow big rect
   c.beginPath();
   c.lineWidth = edge.thickness;
