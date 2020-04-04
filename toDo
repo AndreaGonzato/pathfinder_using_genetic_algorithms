@@ -1,0 +1,8 @@
+1: creare un set di 10+2 rettangoli dove 10 si muovono casualmente 
+2: aggiungere field a rect che assegni a ogni rect un punteggio che indica quanto vicino è andato al target
+3: salvare ogni epoca le top 3 traiettorie
+4: far partire le epoche successive allo scadere dell'tempo o della collisione dei rettangoli
+	4.1 imparare ad usare le feture di javascript tipo timer
+5: creare metodo che permetta di far seguire una traiettoria e applichi una distorsione casuale
+
+
