@@ -25,7 +25,7 @@ addEventListener('mousemove', (event) => {
 
 //-----------------------------------------------------------------------------------------------
 let rectangle = [];
-let numbersOfRectangles = 3;
+let numbersOfRectangles = 12;
 var stage = 0; //use thi var for change stage
 /*
 0 main
@@ -33,12 +33,6 @@ var stage = 0; //use thi var for change stage
 1 position the starting point
 */
 
-//deteminate distance from 2 points
-function getDistance(x1, y1, x2, y2) {
-  let xDistance = x2 - x1;
-  let yDistance = y2 - y1;
-  return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
-}
 
 //event listener for click
 document.addEventListener("click", function () {
@@ -55,6 +49,8 @@ const edge = {
   rightMargin: 1200,
   bottomMargin: 700
 };
+
+var movingSpeedRate;
 
 /**
  * froze rectangle if the are out of the space action
@@ -80,8 +76,11 @@ function borderCollision(rectangle, color, freezes) {
 }
 
 function main() {
+  Rectangle.mapLength = edge.rightMargin;
+  Rectangle.mapHeight = edge.bottomMargin;
+
   unloadScrollBars();
-  rectangle[0] = new Rectangle(undefined, undefined, 'red');
+  rectangle[0] = new Rectangle(undefined, undefined, 'red', false);
   positionTheTarget();
 }
 
@@ -94,7 +93,10 @@ function positionTheTarget() {
   if (stage == 1) {
     document.getElementById("p1").innerHTML = "now position the starting point";
     console.log("target position: ", rectangle[0].x, rectangle[0].y);
-    rectangle[1] = new Rectangle(undefined, undefined, 'blue');
+    // set some static variable of Rectangle
+    Rectangle.xTarget = rectangle[0].x; 
+    Rectangle.yTarget = rectangle[0].y
+    rectangle[1] = new Rectangle(undefined, undefined, 'blue', false);
     positionTheStartingPoint();
   } else {
     requestAnimationFrame(positionTheTarget); //loop agin in the animate function
@@ -117,10 +119,37 @@ function positionTheStartingPoint() {
 }
 
 function initializesExplorers() {
+  console.log(Rectangle.xTarget)
   for(i = 2 ; i<numbersOfRectangles ; i++){
-    rectangle[i] = new Rectangle(rectangle[1].x, rectangle[1].y, 'green');
+    rectangle[i] = new Rectangle(rectangle[1].x, rectangle[1].y, 'green', true);
   }
+  movingSpeedRate = setInterval(moveExplorers, 1000); // set explorer speed as 1 move evry half secod
   explore();
+}
+
+function moveExplorers() {
+  for(i=2 ; i<numbersOfRectangles ; i++){
+    if (!rectangle[i].isFrozen) {
+      let xDelta, yDelta;
+      if(Math.random() < 0.5){
+        xDelta = -5;
+      }else{
+        xDelta = +5;
+      }
+  
+      if(Math.random() < 0.5){
+        yDelta = -5;
+      }else{
+        yDelta = 5;
+      }
+      rectangle[i].setPosition(rectangle[i].x + xDelta,rectangle[i].y + yDelta);
+      rectangle[i].update();  
+    }
+  }
+}
+
+function stopMoveExplorers() {
+  clearInterval(myVar);
 }
 
 
@@ -132,8 +161,9 @@ function explore() {
   rectangle[1].update();
 
   //update and drow explorer
-  rectangle[2].setPosition(Math.floor(mouse.x / 10) * 10, Math.floor(mouse.y / 10) * 10);
-  rectangle[2].update();
+  for(i = 2; i<numbersOfRectangles ; i++){
+    rectangle[i].update();
+  }
 
 
   //determinate contact to target

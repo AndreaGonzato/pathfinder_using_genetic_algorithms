@@ -1,11 +1,18 @@
 class Rectangle {
-  constructor(x, y, color) {
+  static mapLength;
+  static mapHeight;
+  static xTarget;
+  static yTarget;
+
+  constructor(x, y, color, isAnExplorer) {
     this.x = x;
     this.y = y;
     this.sideSize = 20;
     this.color = color;
     this.isFrozen = false;
     this.history = [];
+    this.geneticPoints = 0;
+    this.isAnExplorer = isAnExplorer;
   }
 
   draw() {
@@ -44,6 +51,9 @@ class Rectangle {
         this.y = y;
       }
     }
+    if(this.isAnExplorer){
+      this.updateGeneticPoints();
+    }
   }
 
   setColor(color) {
@@ -58,5 +68,24 @@ class Rectangle {
     return this.history;
   }
 
+  updateGeneticPoints(){
+    let xPoints = 100 - ((this.xTarget - this.x) * 100 / this.mapLength); // [0, 100]
+    let yPoints = 100 - ((this.yTarget - this.y) * 100 / this.mapHeight); // [0, 100]
+    let totalPoints = xPoints + yPoints;
+    if(totalPoints > this.geneticPoints){
+      this.geneticPoints = totalPoints;
+      console.log(this.geneticPoint); // TEST
+    }
+  }
+
 
 }
+
+/*
+//deteminate distance from 2 points
+function getDistance(x1, y1, x2, y2) {
+  let xDistance = x2 - x1;
+  let yDistance = y2 - y1;
+  return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
+}
+*/
