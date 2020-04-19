@@ -1,9 +1,7 @@
 
 [FATTO] 1: creare un set di 10+2 rettangoli dove 10 si muovono casualmente
+[FATTO] 2: aggiungere field a rect che assegni a ogni rect un punteggio che indica quanto vicino è andato al target
 
-[WORKING] updateGeneticPoints()
-
-[TO DO] 2: aggiungere field a rect che assegni a ogni rect un punteggio che indica quanto vicino è andato al target
 [TO DO] 3: salvare ogni epoca le top 3 traiettorie
 [TO DO] 4: far partire le epoche successive allo scadere dell'tempo o della collisione dei rettangoli
 [TO DO]	4.1 imparare ad usare le feture di javascript tipo timer

@@ -1,13 +1,20 @@
 class Rectangle {
-  static mapLength;
-  static mapHeight;
+  // Retangle Map Fields
+  static xMinRectanglePosition; // 10
+  static xMaxRectanglePosition; // 1200
+  static yMinRectanglePosition; // 10
+  static yMaxRectanglePosition; // 700
+
+  static maxDistance; // 1375
+
   static xTarget;
   static yTarget;
+
+  static sideSize = 20;
 
   constructor(x, y, color, isAnExplorer) {
     this.x = x;
     this.y = y;
-    this.sideSize = 20;
     this.color = color;
     this.isFrozen = false;
     this.history = [];
@@ -17,7 +24,7 @@ class Rectangle {
 
   draw() {
     c.beginPath();
-    c.rect(this.x, this.y, this.sideSize, this.sideSize);
+    c.rect(this.x, this.y, Rectangle.sideSize, Rectangle.sideSize);
     c.fillStyle = this.color
     c.fill()
     c.closePath()
@@ -68,24 +75,24 @@ class Rectangle {
     return this.history;
   }
 
+  
   updateGeneticPoints(){
-    let xPoints = 100 - ((this.xTarget - this.x) * 100 / this.mapLength); // [0, 100]
-    let yPoints = 100 - ((this.yTarget - this.y) * 100 / this.mapHeight); // [0, 100]
-    let totalPoints = xPoints + yPoints;
-    if(totalPoints > this.geneticPoints){
-      this.geneticPoints = totalPoints;
-      console.log(this.geneticPoint); // TEST
+    let distance = getDistance(this.x , this.y, Rectangle.xTarget, Rectangle.yTarget);
+    let poits = (Rectangle.maxDistance - distance) / Rectangle.maxDistance * 100;
+
+    if(poits > this.geneticPoints){
+      this.geneticPoints = poits;
     }
+    
   }
 
 
 }
 
-/*
+
 //deteminate distance from 2 points
 function getDistance(x1, y1, x2, y2) {
   let xDistance = x2 - x1;
   let yDistance = y2 - y1;
   return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
 }
-*/

@@ -25,7 +25,8 @@ addEventListener('mousemove', (event) => {
 
 //-----------------------------------------------------------------------------------------------
 let rectangle = [];
-let numbersOfRectangles = 12;
+let NUMBERS_OF_RETANGLES = 12;
+let SPEED_RATE = 500;
 var stage = 0; //use thi var for change stage
 /*
 0 main
@@ -46,8 +47,8 @@ const edge = {
   thickness: 3,
   leftMargin: 10,
   topMargin: 10,
-  rightMargin: 1200,
-  bottomMargin: 700
+  rightMargin: 1210,
+  bottomMargin: 710
 };
 
 var movingSpeedRate;
@@ -76,13 +77,28 @@ function borderCollision(rectangle, color, freezes) {
 }
 
 function main() {
-  Rectangle.mapLength = edge.rightMargin;
-  Rectangle.mapHeight = edge.bottomMargin;
+  setRetangleMapFields();
 
   unloadScrollBars();
   rectangle[0] = new Rectangle(undefined, undefined, 'red', false);
   positionTheTarget();
 }
+
+function setRetangleMapFields(){
+  Rectangle.xMinRectanglePosition = edge.leftMargin;
+  Rectangle.xMaxRectanglePosition = edge.leftMargin + edge.rightMargin - Rectangle.sideSize;
+  Rectangle.yMinRectanglePosition = edge.topMargin;
+  Rectangle.yMaxRectanglePosition = edge.topMargin + edge.bottomMargin - Rectangle.sideSize;
+  Rectangle.maxDistance = getDistance(Rectangle.xMaxRectanglePosition, Rectangle.yMaxRectanglePosition, Rectangle.xMinRectanglePosition, Rectangle.yMinRectanglePosition);
+}
+
+//deteminate distance from 2 points
+function getDistance(x1, y1, x2, y2) {
+  let xDistance = x2 - x1;
+  let yDistance = y2 - y1;
+  return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
+}
+
 
 
 function positionTheTarget() {
@@ -110,7 +126,7 @@ function positionTheStartingPoint() {
   rectangle[1].update();
   rectangle[0].update();
   if (stage == 2) {
-    document.getElementById("p1").innerHTML = "good";
+    document.getElementById("p1").innerHTML = "It is time to explore!";
     console.log("starting point position: ", rectangle[1].x, rectangle[1].y);
     initializesExplorers();
   } else {
@@ -120,30 +136,37 @@ function positionTheStartingPoint() {
 
 function initializesExplorers() {
   console.log(Rectangle.xTarget)
-  for(i = 2 ; i<numbersOfRectangles ; i++){
+  for(i = 2 ; i<NUMBERS_OF_RETANGLES ; i++){
     rectangle[i] = new Rectangle(rectangle[1].x, rectangle[1].y, 'green', true);
   }
-  movingSpeedRate = setInterval(moveExplorers, 1000); // set explorer speed as 1 move evry half secod
+  movingSpeedRate = setInterval(moveExplorers, SPEED_RATE); // set explorer speed as 1 move evry SPEED_RATE millisecods
   explore();
 }
 
 function moveExplorers() {
-  for(i=2 ; i<numbersOfRectangles ; i++){
+  for(i=2 ; i<NUMBERS_OF_RETANGLES ; i++){
     if (!rectangle[i].isFrozen) {
-      let xDelta, yDelta;
+      let xDelta = 0;
+      let yDelta = 0;
+
       if(Math.random() < 0.5){
-        xDelta = -5;
+        //move orizontaly
+        if(Math.random() < 0.5){
+          xDelta = -5;
+        }else{
+          xDelta = +5;
+        }
+
       }else{
-        xDelta = +5;
+        //move verticaly
+        if(Math.random() < 0.5){
+          yDelta = -5;
+        }else{
+          yDelta = 5;
+        }
       }
-  
-      if(Math.random() < 0.5){
-        yDelta = -5;
-      }else{
-        yDelta = 5;
-      }
+
       rectangle[i].setPosition(rectangle[i].x + xDelta,rectangle[i].y + yDelta);
-      rectangle[i].update();  
     }
   }
 }
@@ -161,7 +184,7 @@ function explore() {
   rectangle[1].update();
 
   //update and drow explorer
-  for(i = 2; i<numbersOfRectangles ; i++){
+  for(i = 2; i<NUMBERS_OF_RETANGLES ; i++){
     rectangle[i].update();
   }
 
@@ -169,7 +192,7 @@ function explore() {
   //determinate contact to target
 
   //determinate contact to edge
-  for (i = 2; i < numbersOfRectangles; i++) {
+  for (i = 2; i < NUMBERS_OF_RETANGLES; i++) {
     borderCollision(rectangle[i], "green", true);
   }
 
